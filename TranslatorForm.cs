@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Net;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Taskbar;
-using Microsoft.WindowsAPICodePack.Shell;
-
 
 namespace Traductor_de_Subtitulos
 {
@@ -19,6 +9,7 @@ namespace Traductor_de_Subtitulos
     {
         string open_path = "";
         AnalizadorASS scanASS;
+        AnalizadorSSA scanSSA;
         AnalizadorSRT scanSRT;
         BackgroundWorker background = new BackgroundWorker();
 
@@ -26,6 +17,7 @@ namespace Traductor_de_Subtitulos
         {
             InitializeComponent();
             scanASS = new AnalizadorASS(this);
+            scanSSA = new AnalizadorSSA(this);
             scanSRT = new AnalizadorSRT(this);
         }
 
@@ -51,9 +43,7 @@ namespace Traductor_de_Subtitulos
             var taskbar = Microsoft.WindowsAPICodePack.Taskbar.TaskbarManager.Instance;
             string line = lector.ReadLine(), result = "";
             int readLine_counter = -1, percent;
-            pictureBox1.Image = global::Traductor_de_Subtitulos.Properties.Resources.tenor1;            
-            ;
-            
+            pictureBox1.Image = global::Traductor_de_Subtitulos.Properties.Resources.tenor1;                  
             switch (System.IO.Path.GetExtension(open_path))
             {
                 case ".ass":
@@ -64,7 +54,14 @@ namespace Traductor_de_Subtitulos
                         if (event_section)
                         {
                             readLine_counter++;
-                            result += scanASS.Analizar(line, label_check.Checked, comment_check.Checked, comment_original.Checked, FromTo(comboBox1.SelectedIndex, comboBox2.SelectedIndex)) + "\r\n";
+                            if (System.IO.Path.GetExtension(open_path).Equals(".ass"))
+                            {
+                                result += scanASS.Analizar(line, label_check.Checked, comment_check.Checked, comment_original.Checked, FromTo(comboBox1.SelectedIndex, comboBox2.SelectedIndex)) + "\r\n";
+                            }
+                            else
+                            {
+                                result += scanSSA.Analizar(line, label_check.Checked, comment_check.Checked, comment_original.Checked, FromTo(comboBox1.SelectedIndex, comboBox2.SelectedIndex)) + "\r\n";
+                            }
                             progressBar.PerformStep();
                             percent = (int)(((double)progressBar.Value / (double)progressBar.Maximum) * 100);
                             translateCounterLabelPercent.Text = percent + "%";
@@ -85,7 +82,6 @@ namespace Traductor_de_Subtitulos
                     break;
                 case ".srt":
                     int number;
-                    string translate;
                     while (line != null)
                     {
                         if (Int32.TryParse(line, out number))
@@ -93,10 +89,12 @@ namespace Traductor_de_Subtitulos
                             readLine_counter++;
                             if (number == readLine_counter)
                             {
-                                translateViewText.Text += "\r\n";
+                                //translateViewText.Text += "\r\n";
                                 result += "\r\n"+ line + "\r\n";
                                 line = lector.ReadLine();
                                 translateViewText.Text += line + "\r\n";
+                                translateViewText.SelectionStart = translateViewText.Text.Length;
+                                translateViewText.ScrollToCaret();
                                 result += line + "\r\n";
                                 line = lector.ReadLine();
                                 progressBar.PerformStep();
@@ -111,10 +109,10 @@ namespace Traductor_de_Subtitulos
                         {
                             if (line != "")
                             {
-                                translateViewText.Text += line + "\r\n";
-                                translate = scanSRT.Analizar(line, FromTo(comboBox1.SelectedIndex, comboBox2.SelectedIndex));
-                                translateViewText.Text += translate + "\r\n";
-                                result += translate +"\r\n";
+                               // translateViewText.Text += line + "\r\n";
+                                result += scanSRT.Analizar(line, FromTo(comboBox1.SelectedIndex, comboBox2.SelectedIndex))+"\r\n";
+                               // translateViewText.Text += translate + "\r\n";
+
                             }
                             line = lector.ReadLine();
                         }
@@ -161,11 +159,11 @@ namespace Traductor_de_Subtitulos
 
         private void openFileButton_click(object sender, EventArgs e)
         {
-            int total_lineas = -1;
+            int total_lineas = 0;
             bool seccionEventos = false;
             OpenFileDialog abrirArchivo = new OpenFileDialog();
-            abrirArchivo.Filter = "Advanced SubStation Alpha (*.ass) |*.ass|SubRip (*.srt) |*.srt|Todos los Archivos (*.*)|*.*";
-            abrirArchivo.FilterIndex = 3;
+            abrirArchivo.Filter = "Archivo de Subtitulos (*.ass; *.ssa; *srt)|*.ass; *.ssa; *.srt|Todos los Archivos (*.*)|*.*";
+            abrirArchivo.FilterIndex = 1;
             abrirArchivo.InitialDirectory = "C://";
             abrirArchivo.Multiselect = false;
             abrirArchivo.Title = "Selecciona un archivo de subtitulos";
@@ -229,7 +227,7 @@ namespace Traductor_de_Subtitulos
                 progressBar.Maximum = total_lineas;
                 this.fileData.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 fileData.Rows[0].Cells[0].Value = System.IO.Path.GetFileNameWithoutExtension(abrirArchivo.FileName); ;
-                fileData.Rows[0].Cells[1].Value = total_lineas;
+                fileData.Rows[0].Cells[1].Value = total_lineas-1;
                 fileData.Rows[0].Cells[2].Value = abrirArchivo.FileName;
                 savePathTextbox.Text = System.IO.Path.GetDirectoryName(abrirArchivo.FileName) + "\\" + System.IO.Path.GetFileNameWithoutExtension(abrirArchivo.FileName) + " (1)" + System.IO.Path.GetExtension(abrirArchivo.FileName); ;
             }

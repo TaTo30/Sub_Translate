@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Net;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using System.Linq;
 
 namespace Traductor_de_Subtitulos
 {
@@ -93,6 +85,11 @@ namespace Traductor_de_Subtitulos
                             lexema += c;
                         }
                         break;
+                    /////////////////////////////////////////////////////////////////////////////
+                    ///SEGUIMIENTO DE LOS SALTOS DE LINEAS; LOS SALTOS DE LINEAS SE ELIMINAN  ///
+                    ///PARA QUE LA TRADUCCION SEA DE TODO EL TEXTO YA QUE LA SETENCIA <\N>    ///
+                    ///INTERRUMPE LA ORACION Y EL CONTEXTO A LA HORA DE REALIZAR LA TRADUCCION///
+                    /////////////////////////////////////////////////////////////////////////////
                     case 1:
                         if (c.CompareTo('N') == 0)
                         {

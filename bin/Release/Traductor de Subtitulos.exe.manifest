@@ -90,14 +90,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Traductor de Subtitulos.exe" size="222224">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Traductor de Subtitulos.exe" size="224784">
       <assemblyIdentity name="Traductor de Subtitulos" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>4T7cpDH3Rdnd8upuA0XDMkjxd7pAqLL6imQOolNhs5I=</dsig:DigestValue>
+        <dsig:DigestValue>sDps41GERZGcjzPLkl5+MsXEh+jx5CAwfJCOiTGMuiw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
