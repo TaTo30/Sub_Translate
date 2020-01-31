@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Collections.Specialized;
 using System.Net;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Traductor_de_Subtitulos
 {
@@ -37,5 +35,12 @@ namespace Traductor_de_Subtitulos
 
             }
         }
+    }
+
+    class Translation
+    {
+        public int code { get; set; }
+        public string lang { get; set; }
+        public List<string> text { get; set; }
     }
 }
